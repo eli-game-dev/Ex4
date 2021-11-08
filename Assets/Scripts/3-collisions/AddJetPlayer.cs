@@ -14,7 +14,7 @@ public class AddJetPlayer : MonoBehaviour
             Debug.Log("add Jet to player");
             var destroyComponent = other.GetComponent<DestroyOnTrigger2D>();
             if (destroyComponent) {
-                destroyComponent.StartCoroutine(JetTemporarily(destroyComponent));
+                destroyComponent.StartCoroutine(JetTemporarily(destroyComponent, other));
                 // NOTE: If you just call "StartCoroutine", then it will not work, 
                 //       since the present object is destroyed!
                 Destroy(gameObject);  // Destroy the shield itself - prevent double-use
@@ -23,12 +23,12 @@ public class AddJetPlayer : MonoBehaviour
             Debug.Log("Jet triggered by "+other.name);
         }
     }
-    private IEnumerator JetTemporarily(DestroyOnTrigger2D destroyComponent) {
+    private IEnumerator JetTemporarily(DestroyOnTrigger2D destroyComponent, Collider2D other) {
         _takeAnother++;
         int stat = _takeAnother; //save current take
-        //https://answers.unity.com/questions/650983/how-to-get-variable-from-another-object.html
-        GameObject go = GameObject.Find("PlayerSpaceship");
-        KeyboardMover km = go.GetComponent<KeyboardMover>();
+        //first implement like this to get player KeyboardMover  https://answers.unity.com/questions/650983/how-to-get-variable-from-another-object.html
+       // GameObject go = GameObject.Find("PlayerSpaceship");
+        KeyboardMover km = other.GetComponent<KeyboardMover>();
         float oldSpeed = km.getSpeed();
         km.SetSpeed(newSpeed);
         
