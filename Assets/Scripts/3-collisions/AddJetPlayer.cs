@@ -8,7 +8,8 @@ public class AddJetPlayer : MonoBehaviour
     [Tooltip("New speed of jet, for duration time")] [SerializeField] float newSpeed;
     private readonly int  JetPlayer = 3; //child 3 of player
     private static int _takeAnother; // for indicate if player take another jet
-
+    private static float oldSpeed;//to save old speed of first jet
+    
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.tag == "Player") {
             Debug.Log("add Jet to player");
@@ -28,8 +29,9 @@ public class AddJetPlayer : MonoBehaviour
         int stat = _takeAnother; //save current take
         //first implement like this to get player KeyboardMover  https://answers.unity.com/questions/650983/how-to-get-variable-from-another-object.html
        // GameObject go = GameObject.Find("PlayerSpaceship");
-        KeyboardMover km = other.GetComponent<KeyboardMover>();
-        float oldSpeed = km.getSpeed();
+        KeyboardMover km = other.GetComponent<KeyboardMover>(); 
+         oldSpeed = km.getSpeed();
+         float thisOldSpeed = oldSpeed;//to save old speed of first jet
         km.SetSpeed(newSpeed);
         
         Renderer[] renderers = destroyComponent.GetComponentsInChildren<Renderer>(); // return Renderer child
@@ -40,12 +42,13 @@ public class AddJetPlayer : MonoBehaviour
             yield return new WaitForSeconds(1);
             if (stat != _takeAnother) //if player take another jet
             {
+                oldSpeed = thisOldSpeed; //old speed of first jet
                 yield break;
             }
         }
         Debug.Log("Jet gone!");
  
         renderers[JetPlayer].enabled = false;
-        km.SetSpeed(oldSpeed);
+        km.SetSpeed(oldSpeed); // return to normal speed.
     }
 }
